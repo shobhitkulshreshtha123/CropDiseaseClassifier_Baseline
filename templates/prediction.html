@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0000, #3d0c47);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        img {
+            max-width: 300px;
+            border: 2px solid white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background-color: #ffffff20;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .progress-container {
+            background-color: #ffffff30;
+            border-radius: 20px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 25px;
+            width: 0;
+            border-radius: 20px;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .home-button {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background-color: #f5ba13;
+            color: black;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ image_url }}" alt="Uploaded Image">
+
+    <div class="card">
+        <h2>Prediction:</h2>
+        <p>{{ prediction }}</p>
+
+        <h3>Confidence:</h3>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar" style="width: {{ confidence }}%; background-color: {{ bar_color }};">
+                {{ confidence }}%
+            </div>
+        </div>
+    </div>
+
+    {% if shap_img_url %}
+        <div class="card">
+            <h3>Explanation (SHAP):</h3>
+            <img src="{{ shap_img_url }}" alt="SHAP Explanation" style="max-width: 100%; border: none;">
+        </div>
+    {% endif %}
+
+    <a href="/" class="home-button">Back to Home</a>
+
+</body>
+</html>

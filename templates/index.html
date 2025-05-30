@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detector</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0000, #3d0c47);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+        }
+
+        input[type="file"], select, button {
+            display: block;
+            margin: 1rem auto;
+            font-size: 1.2rem;
+            padding: 1rem;
+            width: 80%;
+            border-radius: 10px;
+            border: none;
+        }
+
+        button {
+            background-color: #f5ba13;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+
+        .card-section {
+            margin-top: 3rem;
+            width: 100%;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .card {
+            background-color: #ffffff10;
+            padding: 1rem;
+            border-radius: 10px;
+            width: 220px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .disease {
+            margin: 0.25rem 0;
+        }
+
+        .high { color: limegreen; }
+        .mid { color: gold; }
+        .low { color: crimson; }
+    </style>
+</head>
+<body>
+    <div class="container" id="landing">
+        <h1>Plant Disease Detection</h1>
+        <form action="/predict" method="post" enctype="multipart/form-data" onsubmit="return previewAndSubmit();">
+            <input type="file" name="data_file" id="data_file" accept="image/*" required onchange="previewImage();">
+            <select name="Name" required>
+                <option value="">Select Plant</option>
+                <option value="apple">Apple</option>
+                <option value="corn">Corn</option>
+                <option value="grapes">Grapes</option>
+                <option value="potato">Potato</option>
+                <option value="tomato">Tomato</option>
+            </select>
+            <button type="submit">Predict</button>
+        </form>
+        <img id="preview" style="display:none;"/>
+    </div>
+
+    <div class="card-section">
+        <h2>Supported Crops, Diseases and Current Accuracies</h2>
+        <div class="card-container">
+            <div class="card">
+                <h3>Potato</h3>
+                <p class="disease">Healthy – <span class="high">98.6%</span></p>
+                <p class="disease">Early Blight – <span class="high">98.2%</span></p>
+                <p class="disease">Late Blight – <span class="high">98.2%</span></p>
+            </div>
+            <div class="card">
+                <h3>Tomato</h3>
+                <p class="disease">Healthy – <span class="mid">94.1%</span></p>
+                <p class="disease">Bacterial Spot – <span class="low">87.5%</span></p>
+                <p class="disease">Early Blight – <span class="low">87.6%</span></p>
+                <p class="disease">Late Blight – <span class="low">77.0%</span></p>
+                <p class="disease">Leaf Mold – <span class="high">97.6%</span></p>
+                <p class="disease">Septoria Leaf Spot – <span class="low">80.7%</span></p>
+                <p class="disease">Spider Mite – <span class="low">80.1%</span></p>
+                <p class="disease">Target Spot – <span class="low">82.7%</span></p>
+                <p class="disease">Yellow Leaf Curl – <span class="low">83.3%</span></p>
+                <p class="disease">Mosaic Virus – <span class="mid">94.6%</span></p>
+            </div>
+            <div class="card">
+                <h3>Grapes</h3>
+                <p class="disease">Healthy – <span class="high">100%</span></p>
+                <p class="disease">Black Rot – <span class="mid">94.0%</span></p>
+                <p class="disease">Black Measles – <span class="mid">90.6%</span></p>
+                <p class="disease">Isariopsis Leaf Spot – <span class="mid">95.6%</span></p>
+            </div>
+            <div class="card">
+                <h3>Corn</h3>
+                <p class="disease">Healthy – <span class="high">99.2%</span></p>
+                <p class="disease">Cercospora Leaf Spot – <span class="low">84.0%</span></p>
+                <p class="disease">Common Rust – <span class="high">97.6%</span></p>
+                <p class="disease">Northern Leaf Blight – <span class="mid">94.1%</span></p>
+            </div>
+            <div class="card">
+                <h3>Apple</h3>
+                <p class="disease">Healthy – <span class="mid">90.0%</span></p>
+                <p class="disease">Apple Scab – <span class="low">81.7%</span></p>
+                <p class="disease">Black Rot – <span class="mid">93.9%</span></p>
+                <p class="disease">Cedar Apple Rust – <span class="mid">97.0%</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function previewImage() {
+            const file = document.getElementById('data_file').files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('preview');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewAndSubmit() {
+            const fileInput = document.getElementById('data_file');
+            if (!fileInput.value) {
+                alert("Please choose an image.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
